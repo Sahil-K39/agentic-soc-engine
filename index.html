@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Antigravity SOC Threat Intelligence Dashboard — real-time cyber threat monitoring and mitigation.">
+    <title>Antigravity SOC Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0D0E12; font-family: monospace; }
+        .neon-border-red { border: 1px solid #EF4444; box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+    </style>
+</head>
+<body class="text-gray-300 min-h-screen p-8">
+
+    <header class="border-b border-gray-800 pb-4 mb-8 flex justify-between items-center">
+        <div>
+            <h1 class="text-xl font-bold text-white tracking-widest">ANTIGRAVITY // THREAT INTELLIGENCE ENGINE</h1>
+            <p class="text-xs text-gray-500">System Monitoring Operational Control Core (v2.0)</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <span class="text-xs text-emerald-400 font-bold uppercase">Agent Operational</span>
+        </div>
+    </header>
+
+    <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <section class="bg-[#13151A] border border-gray-800 p-4 rounded-lg">
+            <h2 class="text-sm font-bold text-gray-400 mb-4 tracking-wider">// SYSTEM INGESTION FEED</h2>
+            <div class="space-y-3 text-xs" id="ui-feed">
+                <div class="bg-black/40 p-2 rounded border border-red-500/30 text-red-400">
+                    [CRITICAL] 203.0.113.89 - SQL Injection attempt detected on backend API router endpoints.
+                </div>
+                <div class="bg-black/20 p-2 rounded border border-gray-800 text-gray-500">
+                    [INFO] 127.0.0.1 - Periodic health-check heartbeat status loop verified 200 OK.
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-[#13151A] border border-gray-800 p-4 rounded-lg">
+            <h2 class="text-sm font-bold text-gray-400 mb-4 tracking-wider">// AGENT REASONING CLUSTER</h2>
+            <div class="border-l-2 border-amber-500 pl-4 space-y-4 text-xs" id="ui-reasoning">
+                <div>
+                    <p class="text-amber-400 font-bold">● Step 01: Execution Trace Isolated</p>
+                    <p class="text-gray-500 text-[11px]">Evaluating input parameters against local signature indices...</p>
+                </div>
+                <div>
+                    <p class="text-emerald-400 font-bold">● Step 02: Mitigation Strategy Staged</p>
+                    <p class="text-gray-500 text-[11px]">Writing structural recovery blocks directly into local workspace JSON targets.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-[#13151A] neon-border-red p-5 rounded-lg flex flex-col justify-between">
+            <div>
+                <div class="flex justify-between items-start mb-4">
+                    <h2 class="text-sm font-bold text-white tracking-wider">// INCIDENT ARTIFACT</h2>
+                    <span class="bg-red-900/40 text-red-400 border border-red-500/50 text-[10px] font-bold px-2 py-0.5 rounded uppercase" id="ui-severity">Critical Breach</span>
+                </div>
+
+                <div class="space-y-4 text-xs">
+                    <div>
+                        <span class="text-gray-500 block text-[10px] uppercase">Attack Signature Matrix</span>
+                        <span class="text-white text-sm font-bold" id="ui-vector">SQL Injection (Data Leak)</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 block text-[10px] uppercase">Source Origin IP Address</span>
+                        <span class="text-gray-300 font-mono" id="ui-ip">203.0.113.89</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 block text-[10px] uppercase">MITRE ATT&CK Matrix Target</span>
+                        <span class="text-amber-400 font-bold" id="ui-mitre">T1190 - Exploit Public-Facing Application</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 block text-[10px] uppercase">Recommended Remediation CLI Command</span>
+                        <pre class="bg-black p-3 rounded mt-1 border border-gray-800 text-emerald-400 overflow-x-auto font-mono text-[11px]" id="ui-patch">iptables -A INPUT -s 203.0.113.89 -j DROP</pre>
+                    </div>
+                </div>
+            </div>
+
+            <button class="w-full mt-6 bg-red-600 hover:bg-red-700 text-white font-bold text-xs py-2.5 rounded tracking-widest transition-colors uppercase" id="ui-btn" onclick="approveMitigation()">
+                Approve Active Containment Patch
+            </button>
+        </section>
+
+    </main>
+
+    <script>
+        // ---------------------------------------------------------------
+        // FIX DES-06: use absolute path for fetch
+        // FIX DES-03: log errors instead of swallowing silently
+        // FIX SEC-01: use textContent instead of innerHTML
+        // FIX DES-05: pause polling when tab is hidden
+        // ---------------------------------------------------------------
+
+        async function fetchReport() {
+            try {
+                const res = await fetch('/mitigation_report.json');
+                if (!res.ok) return;
+                const data = await res.json();
+
+                document.getElementById('ui-vector').textContent = data.vector || "Awaiting Data...";
+                document.getElementById('ui-ip').textContent = data.ip || "0.0.0.0";
+                document.getElementById('ui-mitre').textContent = data.mitre_id || "None";
+                document.getElementById('ui-patch').textContent = data.patch_command || "# Secure Link Clean";
+
+                // Update severity badge
+                const sevBadge = document.getElementById('ui-severity');
+                const isMitigated = data.status === 'Mitigated';
+                sevBadge.textContent = isMitigated ? 'Mitigated' : 'Active Threat';
+                sevBadge.className = isMitigated
+                    ? "bg-emerald-900/40 text-emerald-400 border border-emerald-500/50 text-[10px] font-bold px-2 py-0.5 rounded uppercase"
+                    : "bg-red-900/40 text-red-400 border border-red-500/50 text-[10px] font-bold px-2 py-0.5 rounded uppercase";
+
+                // Update reasoning panel via DOM (no innerHTML — FIX SEC-01)
+                const reasoning = document.getElementById('ui-reasoning');
+                reasoning.replaceChildren();                          // clear
+
+                const step1 = document.createElement('div');
+                const s1title = document.createElement('p');
+                s1title.className = isMitigated ? "text-emerald-400 font-bold" : "text-amber-400 font-bold";
+                s1title.textContent = isMitigated
+                    ? "● Step 01: Signature Isolated"
+                    : "● Step 01: Execution Trace Isolated";
+                const s1desc = document.createElement('p');
+                s1desc.className = "text-gray-500 text-[11px]";
+                s1desc.textContent = isMitigated
+                    ? "MITRE mapping resolved successfully."
+                    : "Evaluating input parameters against local signature indices...";
+                step1.appendChild(s1title);
+                step1.appendChild(s1desc);
+
+                const step2 = document.createElement('div');
+                const s2title = document.createElement('p');
+                s2title.className = "text-emerald-400 font-bold";
+                s2title.textContent = isMitigated
+                    ? "● Step 02: Remediated"
+                    : "● Step 02: Mitigation Strategy Staged";
+                const s2desc = document.createElement('p');
+                s2desc.className = "text-gray-500 text-[11px]";
+                s2desc.textContent = isMitigated
+                    ? "Firewall containment patch successfully approved."
+                    : "Writing structural recovery blocks directly into local workspace JSON targets.";
+                step2.appendChild(s2title);
+                step2.appendChild(s2desc);
+
+                reasoning.appendChild(step1);
+                reasoning.appendChild(step2);
+
+            } catch (e) {
+                console.error("Failed to fetch mitigation report:", e);
+            }
+        }
+
+        async function approveMitigation() {
+            const ip = document.getElementById('ui-ip').textContent;
+            if (ip && ip !== '0.0.0.0') {
+                try {
+                    const res = await fetch('/api/block', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ip: ip, action: 'block' })
+                    });
+                    if (res.ok) {
+                        alert('Firewall block rule successfully enforced on host: ' + ip);
+                        fetchReport();
+                    } else {
+                        const err = await res.json();
+                        alert('Block failed: ' + (err.error || 'Unknown error'));
+                    }
+                } catch (e) {
+                    console.error("Mitigation enforcement failed:", e);
+                }
+            }
+        }
+
+        // FIX DES-05: pause polling when tab is hidden (per security-guardrails.md)
+        let pollTimer = setInterval(fetchReport, 3000);
+
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) {
+                clearInterval(pollTimer);
+                pollTimer = null;
+            } else {
+                if (!pollTimer) {
+                    pollTimer = setInterval(fetchReport, 3000);
+                    fetchReport();              // immediate refresh on return
+                }
+            }
+        });
+
+        // Initial fetch
+        fetchReport();
+    </script>
+</body>
+</html>

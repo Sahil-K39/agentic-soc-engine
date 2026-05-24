@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+# Virtual environment
+.venv/
+env/
+# Environment variables
+.env
+# Logs and data
+mock_auth.log
+mitigation_report.json
+# OS files
+.DS_Store
+# Build artifacts
+*.egg-info/
+# IDE/editor configs
+.vscode/
+.idea/
+# Node/Tailwind cache (if any)
+node_modules/
+# Temporary runtime files
+*.tmp
+*.bak
