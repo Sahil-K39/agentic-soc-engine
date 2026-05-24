@@ -1,4 +1,4 @@
-<![CDATA[<div align="center">
+<div align="center">
 
 # 🛡️ Antigravity SOC — AI-Powered Cyber Threat Intelligence Engine
 
@@ -396,4 +396,3 @@ MIT License — feel free to fork, modify, and deploy.
 *Autonomous AI × Cybersecurity × Real-Time Intelligence*
 
 </div>
-]]>
